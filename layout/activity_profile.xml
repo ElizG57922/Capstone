@@ -31,13 +31,21 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linktree"
+        android:id="@+id/bio"
         android:background="@null"
-        android:hint="Linktree"
-        android:layout_marginBottom="20sp"/>
+        android:hint="Bio"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/save"
         android:text="Save"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/back"
+        android:text="Back"/>
+
 </androidx.appcompat.widget.LinearLayoutCompat>

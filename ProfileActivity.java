@@ -39,10 +39,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
-    private EditText nameText, phoneText;
+    private EditText nameText, phoneText, bioText;
     private ImageView profilePic;
     private DatabaseReference customerDB;
-    private String userID, name, phone, profilePicURL;
+    private String userID, name, phone, bio, profilePicURL;
     private Uri resultURI;
 
     @Override
@@ -51,8 +51,10 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         nameText = findViewById(R.id.name);
         phoneText = findViewById(R.id.phone);
+        bioText = findViewById(R.id.bio);
         profilePic = findViewById(R.id.profilePic);
         Button saveButton = findViewById(R.id.save);
+        Button backButton = findViewById(R.id.back);
         FirebaseAuth myAuth = FirebaseAuth.getInstance();
         userID= myAuth.getCurrentUser().getUid();
         customerDB= FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
@@ -67,6 +69,14 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,9 +98,11 @@ public class ProfileActivity extends AppCompatActivity {
     private void saveProfile(){
         name=nameText.getText().toString();
         phone=phoneText.getText().toString();
+        bio=bioText.getText().toString();
         Map userInfo=new HashMap();
         userInfo.put("name", name);
         userInfo.put("phone", phone);
+        userInfo.put("bio", bio);
         customerDB.updateChildren(userInfo);
         if(resultURI!=null){
             try {

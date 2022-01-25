@@ -29,18 +29,12 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
-
-//https://www.youtube.com/watch?v=lY9zSr6cxko
-//https://developer.android.com/training/secure-file-sharing/share-file
 public class UploadFileActivity extends AppCompatActivity {
     StorageReference storageRef;
     DatabaseReference databaseRef;
     EditText text;
-    Button uploadButton;
+    Button uploadButton, backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +43,20 @@ public class UploadFileActivity extends AppCompatActivity {
 
         text = findViewById(R.id.fileText);
         uploadButton = findViewById(R.id.uploadButton);
+        backButton.findViewById(R.id.back);
         storageRef = FirebaseStorage.getInstance().getReference();
         databaseRef = FirebaseDatabase.getInstance().getReference("uploads");
 
        // uploadButton.setEnabled(false);
 
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(UploadFileActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,59 +139,3 @@ public class UploadFileActivity extends AppCompatActivity {
         });
     }
 }
-/*
-    private void createGoal(String activity, String timeframe, String number, String unit) throws IOException {
-
-        //creates an instance of the Main Dashboard class in order to access the variable counterString.
-        MainDashboard dBoard = new MainDashboard();
-
-        //Names the 0.txt, 1.txt, 2.txt, and so on
-        File file = new File(dBoard.counterString + ".txt");
-
-        //Creates the actual file
-        file.createNewFile();
-
-        //Creates the writer object that will write to the file
-        FileWriter writer = new FileWriter(file);
-
-        //Writes to the text file
-        writer.write(activity + " : " + "0 / "+ number + " " + unit + " in " + timeframe);
-
-        //Closes the Writer
-        writer.close();
-
-        //Creates a Uri from the file to be uploaded
-        upload = Uri.fromFile(new File(activity + ".txt"));
-
-        //Uploads the file exactly as the documentation says, but it doesn't work
-        UploadTask uploadTask = storageRef.putFile(upload);
-// Listen for state changes, errors, and completion of the upload.
-        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                System.out.println("Upload is " + progress + "% done");
-            }
-        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                System.out.println("Upload is paused");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // Handle successful uploads on complete
-                // ...
-
-                //Deletes the file from the local system
-                file.delete();
-
-            }
-        });
-    }
-}*/

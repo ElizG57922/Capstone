@@ -18,6 +18,8 @@
         android:layout_height="wrap_content"
         android:hint="Password"
         android:id="@+id/password"
+        android:ems="10"
+        android:inputType="textPassword"
         />
     <Button
         android:layout_width="match_parent"
@@ -25,4 +27,5 @@
         android:text="Login"
         android:id="@+id/login"
         />
+
 </androidx.appcompat.widget.LinearLayoutCompat>

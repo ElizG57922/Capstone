@@ -21,7 +21,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,16 +41,16 @@ public class MainActivity extends AppCompatActivity {
         Button uploadFileButton = findViewById(R.id.uploadFile);
         myAuth = FirebaseAuth.getInstance();
         currentUserID = myAuth.getCurrentUser().getUid();
-        userDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+        //     userDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        checkUsers();
+        //     checkUsers();
 
-        rowItems=new ArrayList<Card>();
-        arrayAdapter = new ArrayAdapterClass(this, R.layout.item, rowItems);
+        //   rowItems=new ArrayList<Card>();
+        // arrayAdapter = new ArrayAdapterClass(this, R.layout.item, rowItems);
 
-        SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
+        // SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
-        flingContainer.setAdapter(arrayAdapter);
+        // flingContainer.setAdapter(arrayAdapter);
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+    }
+/*
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-    }
+    }*/
 
     public void viewConnections(View view) {
         Intent intent = new Intent(MainActivity.this, ViewConnectionsActivity.class);
