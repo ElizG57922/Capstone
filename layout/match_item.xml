@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="20sp">
+    <ImageView
+        android:layout_width="75sp"
+        android:layout_height="75sp"
+        android:src="@mipmap/ic_launcher"
+        android:id="@+id/connectionImage"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:paddingLeft="20sp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20sp"
+        android:text="Connection Name"
+        android:id="@+id/connectionName"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Connection ID"
+        android:layout_gravity="center"
+        android:id="@+id/connectionId"/>
+    </LinearLayout>
+
+</LinearLayout>
