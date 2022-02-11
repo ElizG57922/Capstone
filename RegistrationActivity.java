@@ -2,6 +2,7 @@ package com.example.storyapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
@@ -21,8 +22,9 @@ import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    private Button registerButton;
-    private EditText nameText, emailText, passwordText;
+    private EditText nameText;
+    private EditText emailText;
+    private EditText passwordText;
     private FirebaseAuth myAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
 
@@ -44,10 +46,21 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         };
 
-        registerButton = findViewById(R.id.register);
+        Button registerButton = findViewById(R.id.register);
+        Button backButton = findViewById(R.id.back);
         emailText = findViewById(R.id.email);
         passwordText = findViewById(R.id.password);
         nameText = findViewById(R.id.name);
+
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RegistrationActivity.this, StartingActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,22 +72,23 @@ public class RegistrationActivity extends AppCompatActivity {
                     myAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegistrationActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (!task.isSuccessful()) {
-                                Toast.makeText(RegistrationActivity.this, "Error! Make sure password is at least 6 characters.", Toast.LENGTH_SHORT).show();
-                            } else {
+                            if (task.isSuccessful() && myAuth.getCurrentUser()!= null) {
                                 String userID = myAuth.getCurrentUser().getUid();
                                 DatabaseReference curUserId = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
                                 Map userInfo = new HashMap<>();
                                 userInfo.put("name", name);
+                                userInfo.put("bio", "");
                                 userInfo.put("profilePicURL", "defaultImage");
 
                                 curUserId.updateChildren(userInfo);
+                            } else {
+                                Toast.makeText(RegistrationActivity.this, "Error! Please check the instructions.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
                 }
                 else{
-                    Toast.makeText(RegistrationActivity.this, "Fields cannot be blank", Toast.LENGTH_SHORT);
+                    Toast.makeText(RegistrationActivity.this, "Fields cannot be blank", Toast.LENGTH_SHORT).show();
                 }
             }
         });

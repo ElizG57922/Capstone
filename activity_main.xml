@@ -19,22 +19,22 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Profile"
+        android:text="Edit Profile"
         android:id="@+id/viewProfile"
         />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Uploads"
+        android:text="Upload"
         android:id="@+id/uploadFile"
         />
+
+    </LinearLayout>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View Connections"
-        android:id="@+id/connections"
-        android:onClick="viewConnections"
+        android:text="View Authors"
+        android:id="@+id/viewAuthors"
+        android:onClick="viewAuthors"
         />
-    </LinearLayout>
-
 </androidx.appcompat.widget.LinearLayoutCompat>

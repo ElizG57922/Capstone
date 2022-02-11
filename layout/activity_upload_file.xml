@@ -7,9 +7,8 @@
 
     <EditText
         android:id="@+id/fileText"
-        android:layout_width="250dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:hint="Name your uploaded file" />
 
@@ -18,16 +17,45 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/fileText"
         android:text="Choose file to upload" />
+
     <Button
+        android:id="@+id/back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/back"
-        android:text="Back"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/uploadButton"
-        ></Button>
+        android:text="Back" />
+
+    <EditText
+        android:id="@+id/typelabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Type"
+        android:inputType="none" />
+    <RadioGroup
+        android:layout_below="@+id/typelabel"
+        android:id="@+id/typegroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/typePDF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PDF" />
+
+        <RadioButton
+            android:id="@+id/typeRTF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="RTF" />
+
+        <RadioButton
+            android:id="@+id/typeTXT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="TXT" />
+    </RadioGroup>
 </RelativeLayout>
