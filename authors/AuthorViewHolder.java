@@ -27,10 +27,10 @@ public class AuthorViewHolder extends RecyclerView.ViewHolder implements View.On
 
     @Override
     public void onClick(View view) {
-      //  Intent intent = new Intent(view.getContext(), ViewProfileActivity.class);
+        Intent intent = new Intent(view.getContext(), ViewProfileActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("authorID", authorID.getText().toString());
-        //intent.putExtras(bundle);
-        //view.getContext().startActivity(intent);
+        intent.putExtras(bundle);
+        view.getContext().startActivity(intent);
     }
 }

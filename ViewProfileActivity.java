@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.storyapp.messages.Message;
 import com.example.storyapp.messages.MessageActivity;
 import com.example.storyapp.messages.MessageAdapter;
@@ -31,8 +34,10 @@ public class ViewProfileActivity extends AppCompatActivity {
     private RecyclerView.Adapter storyAdapter;
     private String currentUserID, authorID;//, messageID;
    // private ArrayList<Story> resultStories;
-    private EditText nameTextField;
-    DatabaseReference databaseUser, databaseUploads;
+    private EditText nameTextField, bioTextField;
+    private ImageView profilePic;
+    private String name, bio, profilePicURL;
+    DatabaseReference databaseAuthor, databaseUploads;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,18 +47,33 @@ public class ViewProfileActivity extends AppCompatActivity {
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         // databaseUser= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("connections").child("match").child(connectionID).child("messageID");
         databaseUploads = FirebaseDatabase.getInstance().getReference().child("Uploads");
+        databaseAuthor = FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
         //  getMessageID();
 
         //resultMessages=new ArrayList<Message>();
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setHasFixedSize(false);
-        RecyclerView.LayoutManager profileLayoutManager = new LinearLayoutManager(ViewProfileActivity.this);
-        recyclerView.setLayoutManager(profileLayoutManager);
+    //    RecyclerView recyclerView = findViewById(R.id.recyclerView);
+    //    recyclerView.setNestedScrollingEnabled(false);
+    //    recyclerView.setHasFixedSize(false);
+    //    RecyclerView.LayoutManager profileLayoutManager = new LinearLayoutManager(ViewProfileActivity.this);
+    //    recyclerView.setLayoutManager(profileLayoutManager);
         // messageAdapter=new MessageAdapter(getDataSetMessages(), MessageActivity.this);
         //recyclerView.setAdapter(messageAdapter);
 
         nameTextField = findViewById(R.id.name);
+        bioTextField = findViewById(R.id.bio);
+        profilePic = findViewById(R.id.profilePic);
+        Button backButton = findViewById(R.id.back);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewProfileActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        getUserInfo();
         // Button sendButton = findViewById(R.id.send);
 
      /*   sendButton.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +83,41 @@ public class ViewProfileActivity extends AppCompatActivity {
             }
         });
     }*/
+
     }
+    private void getUserInfo(){
+        databaseAuthor.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists() && snapshot.getChildrenCount() > 0){
+                    Map<String, Object> map = (Map<String, Object>) snapshot.getValue();
+                    if(map.get("name")!=null) {
+                        name = map.get("name").toString();
+                        nameTextField.setText(name);
+                    }
+                    if(map.get("bio")!=null) {
+                        bio = map.get("bio").toString();
+                        bioTextField.setText(bio);
+                    }
+                    if(map.get("profilePicURL")!=null) {
+                        profilePicURL = map.get("profilePicURL").toString();
+                        switch (profilePicURL){
+                            case "defaultImage":
+                                Glide.with(getApplication()).load(R.mipmap.ic_launcher).into(profilePic);
+                                break;
+                            default://has image URL
+                                Glide.with(getApplication()).load(profilePicURL).into(profilePic);
+                                break;
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
     private void sendMessage() {
         String newMessageText=nameTextField.getText().toString();
         if(!newMessageText.isEmpty()){
@@ -133,4 +187,5 @@ public class ViewProfileActivity extends AppCompatActivity {
         });
     }
     }*/
+
 }

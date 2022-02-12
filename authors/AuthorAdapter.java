@@ -25,8 +25,8 @@ public class AuthorAdapter extends RecyclerView.Adapter<AuthorViewHolder> {
     @NonNull
     @Override
     public AuthorViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View layoutView= LayoutInflater.from(parent.getContext()).inflate(R.layout.author_item, null, false);
-        RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.author_item, null, false);
+        RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutView.setLayoutParams(params);
         AuthorViewHolder row = new AuthorViewHolder(layoutView);
         return row;
@@ -34,8 +34,9 @@ public class AuthorAdapter extends RecyclerView.Adapter<AuthorViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull AuthorViewHolder holder, int position) {
-       // holder.connectionID.setText(matchesList.get(position).getUserID());
         holder.authorName.setText(authorList.get(position).getName());
+        holder.authorBio.setText(authorList.get(position).getBio());
+        holder.authorID.setText(authorList.get(position).getUserID());
         if(!authorList.get(position).getProfilePicURL().equals("defaultImage")) {
             Glide.with(context).load(authorList.get(position).getProfilePicURL()).into(holder.authorImage);
         }

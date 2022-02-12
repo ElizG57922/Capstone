@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="20sp">
+
     <ImageView
         android:layout_width="75sp"
         android:layout_height="75sp"
@@ -21,16 +22,21 @@
             android:paddingBottom="20sp"
             android:text="Name"
             android:id="@+id/authorName"/>
+
         <TextView
+            android:id="@+id/authorID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="ID"
-            android:id="@+id/authorID"/>
+            android:visibility="invisible" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Bio"
             android:layout_gravity="center"
+            android:ems="10"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
             android:id="@+id/authorBio"/>
     </LinearLayout>
 
