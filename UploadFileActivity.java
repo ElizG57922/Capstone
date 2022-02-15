@@ -16,11 +16,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -29,25 +32,31 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class UploadFileActivity extends AppCompatActivity {
     StorageReference storageRef;
     DatabaseReference databaseRef;
-    EditText text;
+    EditText filenameText, description;
     Button uploadButton, backButton;
+    RadioGroup filetype;
+    int typeID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_file);
 
-        text = findViewById(R.id.fileText);
+        filenameText = findViewById(R.id.fileText);
         uploadButton = findViewById(R.id.uploadButton);
-        backButton.findViewById(R.id.back);
+        backButton=findViewById(R.id.back);
+        filetype=findViewById(R.id.typegroup);
+        description = findViewById(R.id.desc);
+        typeID = filetype.getCheckedRadioButtonId();
         storageRef = FirebaseStorage.getInstance().getReference();
-        databaseRef = FirebaseDatabase.getInstance().getReference("uploads");
-
-       // uploadButton.setEnabled(false);
+        databaseRef = FirebaseDatabase.getInstance().getReference("Uploads");
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,8 +76,20 @@ public class UploadFileActivity extends AppCompatActivity {
     }
 
     private void selectFile() {
+        typeID = filetype.getCheckedRadioButtonId();
         Intent intent = new Intent();
-        intent.setType("application/pdf");
+        switch (typeID){
+            case R.id.typePDF:
+                intent.setType("application/pdf");
+                break;
+            case R.id.typeRTF:
+                intent.setType("text/rtf");
+                break;
+            case R.id.typeTXT:
+            default:
+                intent.setType("text/plain");
+                break;
+        }
         intent.setAction(intent.ACTION_GET_CONTENT);
     //    Intent chooserIntent = Intent.createChooser(intent, "choosefile");
   //      getResult.launch(chooserIntent);
@@ -90,44 +111,57 @@ public class UploadFileActivity extends AppCompatActivity {
                                 uploadPDFFirebase(result.getData().getData());
                             }
                         });
-
                     }
                 }
             });
-
    */
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode==12 && resultCode == RESULT_OK && data != null && data.getData()!= null){
-      //      uploadButton.setEnabled(true);
-            text.setText(data.getDataString().substring(data.getDataString().lastIndexOf("/")+1));
+            filenameText.setText(data.getDataString().substring(data.getDataString().lastIndexOf("/")+1));
 
             uploadButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    uploadPDFFirebase(data.getData());
+                    uploadFileFirebase(data.getData());
                 }
             });
         }
     }
 
-    private void uploadPDFFirebase(Uri data) {
+    private void uploadFileFirebase(Uri data) {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("File loading...");
         progressDialog.show();
+        StorageReference ref;
+        switch (typeID){
+            case R.id.typePDF:
+                ref = storageRef.child("upload"+System.currentTimeMillis()+".pdf");
+                break;
+            case R.id.typeRTF:
+                ref = storageRef.child("upload"+System.currentTimeMillis()+".rtf");
+                break;
+            case R.id.typeTXT:
+            default:
+                ref = storageRef.child("upload"+System.currentTimeMillis()+".txt");
+                break;
+        }
 
-        StorageReference ref = storageRef.child("upload"+System.currentTimeMillis()+".pdf");
         ref.putFile(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                while(!uriTask.isComplete());
+                while(!uriTask.isComplete());//wait
                 Uri uri = uriTask.getResult();
 
-                PutFileInStorage putPDF = new PutFileInStorage(text.getText().toString(), uri.toString());
-                databaseRef.child(databaseRef.push().getKey()).setValue(putPDF);
-                Toast.makeText(UploadFileActivity.this, "File Upload", Toast.LENGTH_LONG).show();
+                String currentUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                PutFileInStorage putFile = new PutFileInStorage(filenameText.getText().toString(), uri.toString(), currentUID, description.getText().toString());
+                databaseRef.child(databaseRef.push().getKey()).setValue(putFile);
+                DatabaseReference userDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+                userDatabase.child(currentUID).child("stories").child(filenameText.getText().toString()).setValue(uri.toString());
+                Toast.makeText(UploadFileActivity.this, "File Uploaded", Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {

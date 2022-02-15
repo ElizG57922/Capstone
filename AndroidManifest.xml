@@ -13,25 +13,37 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StoryApp" >
         <activity
-            android:name="com.example.storyapp.LoginActivity"
+            android:name=".ViewStoryActivity"
             android:exported="true" />
         <activity
-            android:name="com.example.storyapp.UploadFileActivity"
+            android:name=".ViewProfileActivity"
             android:exported="true" />
         <activity
-            android:name="com.example.storyapp.messages.MessageActivity"
+            android:name=".ResetPasswordActivity"
             android:exported="true" />
         <activity
-            android:name="com.example.storyapp.connections.ViewConnectionsActivity"
+            android:name=".LoginActivity"
             android:exported="true" />
         <activity
-            android:name="com.example.storyapp.ProfileActivity"
+            android:name=".UploadFileActivity"
             android:exported="true" />
         <activity
-            android:name="com.example.storyapp.RegistrationActivity"
+            android:name=".messages.MessageActivity"
             android:exported="true" />
         <activity
-            android:name="com.example.storyapp.LoginOrRegisterActivity"
+            android:name=".authors.ViewAuthorsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".stories.ViewStoriesActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="true" />
+        <activity
+            android:name=".RegistrationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".StartingActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.storyapp.MainActivity"
+            android:name=".MainActivity"
             android:exported="true" />
     </application>
 
