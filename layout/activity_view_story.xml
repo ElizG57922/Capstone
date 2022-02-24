@@ -5,14 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.storyapp.ProfileActivity">
+    tools:context="com.example.storyapp.ViewStoryActivity">
 
-    <ImageView
-        android:layout_width="100sp"
-        android:layout_height="100sp"
-        android:id="@+id/profilePic"
-        android:src="@mipmap/ic_launcher"
-        android:layout_marginBottom="20sp"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,17 +17,19 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bio"
+        android:id="@+id/authorName"
         android:background="@null"
-        android:hint="Bio"
+        android:hint="Author"
+        android:layout_marginBottom="20sp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/desc"
+        android:background="@null"
+        android:hint="Description"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/save"
-        android:text="Save"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

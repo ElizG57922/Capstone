@@ -2,27 +2,18 @@ package com.example.storyapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storyapp.cards.ArrayAdapterClass;
 import com.example.storyapp.cards.Card;
-import com.example.storyapp.connections.ViewConnectionsActivity;
+import com.example.storyapp.authors.ViewAuthorsActivity;
+import com.example.storyapp.stories.ViewStoriesActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 myAuth.signOut();
-                Intent intent = new Intent(MainActivity.this, LoginOrRegisterActivity.class);
+                Intent intent = new Intent(MainActivity.this, StartingActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -82,16 +73,12 @@ public class MainActivity extends AppCompatActivity {
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
                 rowItems.remove(0);
                 arrayAdapter.notifyDataSetChanged();
             }
             @Override
             public void onLeftCardExit(Object dataObject) {
-                //Do something on the left!
-                //You also have access to the original object.
-                //If you want to use it just cast it (String) dataObject
                 Card currentCard = (Card) dataObject;
                 String userID = currentCard.getUserID();
       //          userDatabase.child(userID).child("connections").child("reject").child(currentUserID).setValue(true);
@@ -173,8 +160,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }*/
 
-    public void viewConnections(View view) {
-        Intent intent = new Intent(MainActivity.this, ViewConnectionsActivity.class);
+    public void viewAuthors(View view) {
+        Intent intent = new Intent(MainActivity.this, ViewAuthorsActivity.class);
         startActivity(intent);
+        finish();
+    }
+    public void viewNewStories(View view) {
+        Intent intent = new Intent(MainActivity.this, ViewStoriesActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

@@ -4,12 +4,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.storyapp.UploadFileActivity">
+    <RadioGroup
+        android:id="@+id/typegroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+        <RadioButton
+            android:id="@+id/typePDF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PDF" />
+
+        <RadioButton
+            android:id="@+id/typeRTF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="RTF" />
+
+        <RadioButton
+            android:id="@+id/typeTXT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="TXT" />
+    </RadioGroup>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/typegroup"
+        android:id="@+id/desc"
+        android:background="@null"
+        android:hint="Description"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"/>
     <EditText
         android:id="@+id/fileText"
-        android:layout_width="250dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:hint="Name your uploaded file" />
 
@@ -18,16 +50,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/fileText"
         android:text="Choose file to upload" />
+
     <Button
+        android:id="@+id/back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/back"
-        android:text="Back"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/uploadButton"
-        ></Button>
+        android:text="Back" />
+
+
 </RelativeLayout>
