@@ -7,8 +7,6 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.storyapp.cards.ArrayAdapterClass;
-import com.example.storyapp.cards.Card;
 import com.example.storyapp.authors.ViewAuthorsActivity;
 import com.example.storyapp.stories.ViewStoriesActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,8 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayAdapterClass arrayAdapter;
-    List<Card> rowItems;
+  //  private ArrayAdapterClass arrayAdapter;
+   // List<Card> rowItems;
     private FirebaseAuth myAuth;
     private DatabaseReference userDatabase;
     private String currentUserID;
