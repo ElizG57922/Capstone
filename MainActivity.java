@@ -7,8 +7,6 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.storyapp.cards.ArrayAdapterClass;
-import com.example.storyapp.cards.Card;
 import com.example.storyapp.authors.ViewAuthorsActivity;
 import com.example.storyapp.stories.ViewStoriesActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,8 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayAdapterClass arrayAdapter;
-    List<Card> rowItems;
+  //  private ArrayAdapterClass arrayAdapter;
+   // List<Card> rowItems;
     private FirebaseAuth myAuth;
     private DatabaseReference userDatabase;
     private String currentUserID;
@@ -73,16 +71,12 @@ public class MainActivity extends AppCompatActivity {
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
                 rowItems.remove(0);
                 arrayAdapter.notifyDataSetChanged();
             }
             @Override
             public void onLeftCardExit(Object dataObject) {
-                //Do something on the left!
-                //You also have access to the original object.
-                //If you want to use it just cast it (String) dataObject
                 Card currentCard = (Card) dataObject;
                 String userID = currentCard.getUserID();
       //          userDatabase.child(userID).child("connections").child("reject").child(currentUserID).setValue(true);

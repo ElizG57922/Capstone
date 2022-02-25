@@ -1,5 +1,13 @@
 package com.example.storyapp.stories;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class Story {
     private String storyID;
     private String name;
@@ -12,11 +20,26 @@ public class Story {
         this.storyID=storyID;
         this.name=name;
         this.authorID=authorID;
-        this.authorName=authorID;
+        findAuthorName(authorID);
         this.description=description;
         this.storyURL=storyURL;
     }
+    private void findAuthorName(String authorID) {
+        DatabaseReference authorDB= FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
 
+        authorDB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    if(snapshot.child("name").getValue()!=null) {
+                        authorName=snapshot.child("name").getValue().toString();
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
     public String getDescription() {
         return description;
     }

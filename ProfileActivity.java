@@ -102,8 +102,8 @@ public class ProfileActivity extends AppCompatActivity {
         customerDB.updateChildren(userInfo);
         if(resultURI!=null){
             try {
-                StorageReference path= FirebaseStorage.getInstance().getReference().child("profileImage").child(userID);
-                Bitmap bmp= MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultURI);
+                StorageReference path = FirebaseStorage.getInstance().getReference().child("profileImage").child(userID);
+                Bitmap bmp = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultURI);
                 ByteArrayOutputStream byteOutput=new ByteArrayOutputStream();
                 bmp.compress(Bitmap.CompressFormat.JPEG, 15, byteOutput);
                 byte[] data=byteOutput.toByteArray();

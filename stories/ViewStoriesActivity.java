@@ -3,12 +3,16 @@ package com.example.storyapp.stories;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.storyapp.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -96,7 +100,7 @@ public class ViewStoriesActivity extends AppCompatActivity {
     private void findAuthorName(String authorID, Story newStory) {
         DatabaseReference authorDB=FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
 
-        authorDB.addListenerForSingleValueEvent(new ValueEventListener() {
+            authorDB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -104,7 +108,6 @@ public class ViewStoriesActivity extends AppCompatActivity {
                     if(snapshot.child("name").getValue()!=null) {
                         String authorName=snapshot.child("name").getValue().toString();
                         newStory.setAuthorName(authorName);
-
                     }
                 }
 
