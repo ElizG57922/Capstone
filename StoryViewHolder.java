@@ -3,19 +3,16 @@ package com.example.storyapp.stories;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.storyapp.R;
-import com.example.storyapp.ViewProfileActivity;
 import com.example.storyapp.ViewStoryActivity;
 
 
 public class StoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     public TextView storyID, storyName, authorID, authorName, description;
-  //  public ImageView authorImage;
 
     public StoryViewHolder(View itemView){
         super(itemView);
@@ -25,7 +22,6 @@ public class StoryViewHolder extends RecyclerView.ViewHolder implements View.OnC
         authorID=itemView.findViewById(R.id.authorID);
         authorName=itemView.findViewById(R.id.authorName);
         description=itemView.findViewById(R.id.desc);
-    //    authorImage=itemView.findViewById(R.id.authorImage);
     }
 
     @Override

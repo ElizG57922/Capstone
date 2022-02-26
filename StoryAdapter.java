@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.storyapp.R;
 
 import java.util.List;
@@ -39,9 +38,6 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryViewHolder> {
         holder.authorID.setText(storyList.get(position).getAuthorID());
         holder.authorName.setText("By "+storyList.get(position).getAuthorName());
         holder.description.setText(storyList.get(position).getDescription());
-      //  if(!storyList.get(position).getProfilePicURL().equals("defaultImage")) {
-      //      Glide.with(context).load(storyList.get(position).getProfilePicURL()).into(holder.authorImage);
-      //  }
     }
 
     @Override

@@ -34,6 +34,7 @@ public class UploadFileActivity extends AppCompatActivity {
     Button uploadButton, backButton;
     RadioGroup filetype;
     int typeID;
+    String typeString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +72,16 @@ public class UploadFileActivity extends AppCompatActivity {
         switch (typeID){
             case R.id.typePDF:
                 intent.setType("application/pdf");
+                typeString="pdf";
                 break;
             case R.id.typeRTF:
                 intent.setType("text/rtf");
+                typeString="rtf";
                 break;
             case R.id.typeTXT:
             default:
                 intent.setType("text/plain");
+                typeString="txt";
                 break;
         }
         intent.setAction(intent.ACTION_GET_CONTENT);
@@ -132,6 +136,7 @@ public class UploadFileActivity extends AppCompatActivity {
                 storyInfo.put("url", uri.toString());
                 storyInfo.put("author", currentUID);
                 storyInfo.put("desc", description.getText().toString());
+                storyInfo.put("type", typeString);
                 databaseRef.child(currentUID+System.currentTimeMillis()).updateChildren(storyInfo);
                 DatabaseReference userDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
                 userDatabase.child(currentUID).child("stories").child(filenameText.getText().toString()).setValue(uri.toString());

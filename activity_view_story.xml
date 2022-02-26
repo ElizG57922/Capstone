@@ -35,6 +35,10 @@
     android:layout_height="wrap_content"
     android:id="@+id/back"
     android:text="Back"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/storyText"/>
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfView"
         android:layout_width="match_parent"

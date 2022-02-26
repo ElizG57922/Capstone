@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.storyapp.R;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,9 +29,9 @@ public class ViewAuthorsActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager matchLayoutManager = new LinearLayoutManager(ViewAuthorsActivity.this);
-        recyclerView.setLayoutManager(matchLayoutManager);
-        authorAdapter=new AuthorAdapter(getDataSetMatches(), ViewAuthorsActivity.this);
+        RecyclerView.LayoutManager newLayoutManager = new LinearLayoutManager(ViewAuthorsActivity.this);
+        recyclerView.setLayoutManager(newLayoutManager);
+        authorAdapter=new AuthorAdapter(getListAuthors(), ViewAuthorsActivity.this);
         recyclerView.setAdapter(authorAdapter);
 
         getAuthors();
@@ -86,7 +85,7 @@ public class ViewAuthorsActivity extends AppCompatActivity {
         });
     }
 
-    private List<Author> getDataSetMatches(){
+    private List<Author> getListAuthors(){
         return resultAuthors;
     }
 }

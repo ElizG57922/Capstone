@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,21 +20,32 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
 
 
 public class ViewStoryActivity extends AppCompatActivity {
     private String currentUserID, storyID;
     private EditText nameTextField, descTextField, authorTextField;
     private PDFView pdfView;
+    private TextView textView;
     private String name, desc, author, storyURL;
     DatabaseReference databaseAuthor, databaseUploads;
     @Override
@@ -50,6 +64,7 @@ public class ViewStoryActivity extends AppCompatActivity {
         authorTextField = findViewById(R.id.authorName);
         Button backButton = findViewById(R.id.back);
         pdfView = (PDFView) findViewById(R.id.pdfView);
+        textView = findViewById(R.id.storyText);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +100,32 @@ public class ViewStoryActivity extends AppCompatActivity {
 
                     if(map.get("url")!=null) {
                         storyURL = map.get("url").toString();
-                        new GetPDFFirebase().execute(storyURL);
+                        if(map.get("type").equals("pdf"))
+                            new GetPDFFirebase().execute(storyURL);
+                        else if (map.get("type").equals("txt")){
+                            File file = new File(storyURL);
+                            try {
+
+                                FileInputStream fis = new FileInputStream(file);
+                                String string = "";
+                                StringBuilder stringBuilder = new StringBuilder();
+
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+                                while (true) {
+                                    try {
+                                        if ((string = reader.readLine()) == null) break;
+                                    }
+                                    catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    stringBuilder.append(string).append("\n");
+                                    textView.setText(stringBuilder);
+                                }
+                                fis.close();
+                                FileReader r = new FileReader(file);
+                                r.close();
+                            } catch (Exception e) { }
+                        }
                     }
 
                 }
@@ -102,106 +142,36 @@ public class ViewStoryActivity extends AppCompatActivity {
         authorDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                 if (snapshot.exists()) {
                     if(snapshot.child("name").getValue()!=null) {
                         String authorName=snapshot.child("name").getValue().toString();
                         authorTextField.setText("By "+authorName);
-
                     }
                 }
-
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
-    /*
-    private List<Message> getDataSetMessages(){
-        return resultMessages;
-    }
-    private void getMessageID(){
-        databaseUser.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    messageID=snapshot.getValue().toString();
-                    databaseMessenger=databaseMessenger.child(messageID);
-                    getMessages();
+    class GetPDFFirebase extends AsyncTask<String, Void, InputStream> {
+        @Override
+        protected InputStream doInBackground(String... strings) {
+            InputStream pdfStream = null;
+            try {
+                URL url = new URL(strings[0]);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                if (httpURLConnection.getResponseCode() == 200) {
+                    pdfStream = new BufferedInputStream(httpURLConnection.getInputStream());
                 }
+            } catch (IOException e) {
+                return null;
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }
-
-    private void getMessages() {
-        databaseMessenger.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                if(snapshot.exists()){
-                    String message=null;
-                    String createdBy=null;
-                    if(snapshot.child("text").getValue()!=null){
-                        message=snapshot.child("text").getValue().toString();
-                    }
-                    if(snapshot.child("createdBy").getValue()!=null){
-                        message=snapshot.child("createdBy").getValue().toString();
-                    }
-                    if(message!=null && createdBy!=null){
-                        boolean currentUserBoolean=false;
-                        if(createdBy.equals(currentUserID)){
-                            currentUserBoolean=true;
-                        }
-                        Message newMessage=new Message(message, currentUserBoolean);
-                        resultMessages.add(newMessage);
-                        messageAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            }
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-            }
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }
-    }*/
-        class GetPDFFirebase extends AsyncTask<String, Void, InputStream> {
-            @Override
-            protected InputStream doInBackground(String... strings) {
-                InputStream pdfStream = null;
-                try {
-                    URL url = new URL(strings[0]);
-
-                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                    if (httpURLConnection.getResponseCode() == 200) {
-                        // response code 200 means successdul connection
-                        pdfStream = new BufferedInputStream(httpURLConnection.getInputStream());
-                    }
-
-                } catch (IOException e) {
-                    return null;
-                }
-                // returning stream of PDF file
-                return pdfStream;
-            }
-
-            @Override
-            protected void onPostExecute(InputStream inputStream) {
-                // show the pdf in pdfview
-                pdfView.fromStream(inputStream).load();
-            }
+            return pdfStream;
         }
+        @Override
+        protected void onPostExecute(InputStream inputStream) {
+            pdfView.fromStream(inputStream).load();
+        }
+    }
 }
