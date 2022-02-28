@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,24 +19,17 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
 
 
 public class ViewStoryActivity extends AppCompatActivity {
@@ -46,8 +37,8 @@ public class ViewStoryActivity extends AppCompatActivity {
     private EditText nameTextField, descTextField, authorTextField;
     private PDFView pdfView;
     private TextView textView;
-    private String name, desc, author, storyURL;
-    DatabaseReference databaseAuthor, databaseUploads;
+    private String name, desc, storyURL;
+    DatabaseReference databaseUploads;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,15 +46,15 @@ public class ViewStoryActivity extends AppCompatActivity {
 
         storyID = getIntent().getExtras().getString("storyID");
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        // databaseUser= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("connections").child("match").child(connectionID).child("messageID");
         databaseUploads = FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID);
      //   databaseAuthor = FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
+
 
         nameTextField = findViewById(R.id.name);
         descTextField = findViewById(R.id.desc);
         authorTextField = findViewById(R.id.authorName);
         Button backButton = findViewById(R.id.back);
-        pdfView = (PDFView) findViewById(R.id.pdfView);
+        pdfView = findViewById(R.id.pdfView);
         textView = findViewById(R.id.storyText);
 
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -103,31 +94,9 @@ public class ViewStoryActivity extends AppCompatActivity {
                         if(map.get("type").equals("pdf"))
                             new GetPDFFirebase().execute(storyURL);
                         else if (map.get("type").equals("txt")){
-                            File file = new File(storyURL);
-                            try {
-
-                                FileInputStream fis = new FileInputStream(file);
-                                String string = "";
-                                StringBuilder stringBuilder = new StringBuilder();
-
-                                BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-                                while (true) {
-                                    try {
-                                        if ((string = reader.readLine()) == null) break;
-                                    }
-                                    catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    stringBuilder.append(string).append("\n");
-                                    textView.setText(stringBuilder);
-                                }
-                                fis.close();
-                                FileReader r = new FileReader(file);
-                                r.close();
-                            } catch (Exception e) { }
+                            new GetTextfileFirebase().execute();
                         }
                     }
-
                 }
             }
             @Override
@@ -154,6 +123,39 @@ public class ViewStoryActivity extends AppCompatActivity {
         });
     }
 
+    class GetTextfileFirebase extends AsyncTask<String, Void, InputStream> {
+        String story;
+        @Override
+        protected InputStream doInBackground(String... strings) {
+            InputStream textStream = null;
+            story = "";
+            try {
+                try {
+                    URL url = new URL(storyURL);
+                    BufferedReader bufferReader = new BufferedReader(new InputStreamReader(url.openStream()));
+                    String line = bufferReader.readLine();
+
+                    while(line != null) {
+                        story += "\n"+line;
+                        line = bufferReader.readLine();
+                    }
+                    bufferReader.close();
+                }
+                catch (MalformedURLException malformedURLException) {
+                    malformedURLException.printStackTrace();
+                }
+                catch (IOException iOException) {
+                    iOException.printStackTrace();
+                }
+            }
+            catch (Exception e){ e.printStackTrace();}
+            return textStream;
+        }
+        @Override
+        protected void onPostExecute(InputStream inputStream) {
+            textView.setText(story);
+        }
+    }
     class GetPDFFirebase extends AsyncTask<String, Void, InputStream> {
         @Override
         protected InputStream doInBackground(String... strings) {
