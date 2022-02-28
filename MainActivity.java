@@ -12,11 +12,7 @@ import com.example.storyapp.stories.ViewStoriesActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
-  //  private ArrayAdapterClass arrayAdapter;
-   // List<Card> rowItems;
     private FirebaseAuth myAuth;
     private DatabaseReference userDatabase;
     private String currentUserID;

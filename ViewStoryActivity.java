@@ -28,13 +28,14 @@ import java.net.URL;
 import java.util.Map;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
 
 
 public class ViewStoryActivity extends AppCompatActivity {
     private String currentUserID, storyID;
-    private EditText nameTextField, descTextField, authorTextField;
+    private TextView nameTextField, descTextField, authorTextField, numLikes;
     private PDFView pdfView;
     private TextView textView;
     private String name, desc, storyURL;
@@ -53,6 +54,7 @@ public class ViewStoryActivity extends AppCompatActivity {
         nameTextField = findViewById(R.id.name);
         descTextField = findViewById(R.id.desc);
         authorTextField = findViewById(R.id.authorName);
+        numLikes = findViewById(R.id.numLikes);
         Button backButton = findViewById(R.id.back);
         pdfView = findViewById(R.id.pdfView);
         textView = findViewById(R.id.storyText);
@@ -88,7 +90,10 @@ public class ViewStoryActivity extends AppCompatActivity {
                         String authorID = map.get("author").toString();
                         findAuthorName(authorID);
                     }
-
+                    if(map.get("rating")!=null) {
+                        int rating = Integer.parseInt(map.get("rating").toString());
+                        numLikes.setText("Likes: "+rating);
+                    }
                     if(map.get("url")!=null) {
                         storyURL = map.get("url").toString();
                         if(map.get("type").equals("pdf"))
@@ -123,6 +128,52 @@ public class ViewStoryActivity extends AppCompatActivity {
         });
     }
 
+    public void likeStory(View view) {
+        databaseUploads.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) { //rating +1 if the user has not already rated this story
+                if(snapshot.exists() && !snapshot.child("usersAlreadyRated").hasChild(currentUserID)){
+                    int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
+                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyRated").child(currentUserID).setValue(true);
+                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating+1);
+                    Toast.makeText(ViewStoryActivity.this, "Liked", Toast.LENGTH_SHORT).show();
+                }
+                else if(snapshot.exists() && snapshot.child("usersAlreadyRated").hasChild(currentUserID)){ //undo like
+                    int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
+                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyRated").child(currentUserID).setValue(false);
+                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating-1);
+                    Toast.makeText(ViewStoryActivity.this, "Unliked", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    public void dislikeStory(View view) {
+        databaseUploads.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) { //rating -1 if the user has not already rated this story
+                if(snapshot.exists() && !snapshot.child("usersAlreadyRated").hasChild(currentUserID)){
+                    int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
+                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyRated").child(currentUserID).setValue(true);
+                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating-1);
+                    Toast.makeText(ViewStoryActivity.this, "Disliked", Toast.LENGTH_SHORT).show();
+                }
+                else if(snapshot.exists() && snapshot.child("usersAlreadyRated").hasChild(currentUserID)){ //undo dislike
+                    int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
+                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyRated").child(currentUserID).setValue(false);
+                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating+1);
+                    Toast.makeText(ViewStoryActivity.this, "Undisliked", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
     class GetTextfileFirebase extends AsyncTask<String, Void, InputStream> {
         String story;
         @Override
@@ -131,7 +182,7 @@ public class ViewStoryActivity extends AppCompatActivity {
             story = "";
             try {
                 try {
-                    URL url = new URL(storyURL);
+                    URL url = new URL(storyURL); //read textfile in
                     BufferedReader bufferReader = new BufferedReader(new InputStreamReader(url.openStream()));
                     String line = bufferReader.readLine();
 
@@ -158,7 +209,7 @@ public class ViewStoryActivity extends AppCompatActivity {
     }
     class GetPDFFirebase extends AsyncTask<String, Void, InputStream> {
         @Override
-        protected InputStream doInBackground(String... strings) {
+        protected InputStream doInBackground(String... strings) { //read pdf file in
             InputStream pdfStream = null;
             try {
                 URL url = new URL(strings[0]);

@@ -74,10 +74,6 @@ public class UploadFileActivity extends AppCompatActivity {
                 intent.setType("application/pdf");
                 typeString="pdf";
                 break;
-            case R.id.typeRTF:
-                intent.setType("text/rtf");
-                typeString="rtf";
-                break;
             case R.id.typeTXT:
             default:
                 intent.setType("text/plain");
@@ -112,9 +108,6 @@ public class UploadFileActivity extends AppCompatActivity {
             case R.id.typePDF:
                 ref = storageRef.child("upload"+System.currentTimeMillis()+".pdf");
                 break;
-            case R.id.typeRTF:
-                ref = storageRef.child("upload"+System.currentTimeMillis()+".rtf");
-                break;
             case R.id.typeTXT:
             default:
                 ref = storageRef.child("upload"+System.currentTimeMillis()+".txt");
@@ -137,6 +130,7 @@ public class UploadFileActivity extends AppCompatActivity {
                 storyInfo.put("author", currentUID);
                 storyInfo.put("desc", description.getText().toString());
                 storyInfo.put("type", typeString);
+                storyInfo.put("rating", 0);
                 databaseRef.child(currentUID+System.currentTimeMillis()).updateChildren(storyInfo);
                 DatabaseReference userDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
                 userDatabase.child(currentUID).child("stories").child(filenameText.getText().toString()).setValue(uri.toString());
