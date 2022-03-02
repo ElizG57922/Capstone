@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -132,17 +131,25 @@ public class ViewStoryActivity extends AppCompatActivity {
         databaseUploads.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) { //rating +1 if the user has not already rated this story
-                if(snapshot.exists() && !snapshot.child("usersAlreadyRated").hasChild(currentUserID)){
-                    int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
-                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyRated").child(currentUserID).setValue(true);
-                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating+1);
-                    Toast.makeText(ViewStoryActivity.this, "Liked", Toast.LENGTH_SHORT).show();
+                if(snapshot.exists() && !snapshot.child("usersAlreadyDisiked").hasChild(currentUserID)) {
+                    if (!snapshot.child("usersAlreadyLiked").hasChild(currentUserID)) {
+                        int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
+                        FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyLiked").child(currentUserID).setValue(true);
+                        FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("likedStories").child(storyID).setValue(true);
+                        FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating + 1);
+                        numLikes.setText("Likes: " + (rating + 1));
+                        Toast.makeText(ViewStoryActivity.this, "Liked", Toast.LENGTH_SHORT).show();
+                    } else { //undo like
+                        int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
+                        FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyLiked").child(currentUserID).removeValue();
+                        FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("likedStories").child(storyID).removeValue();
+                        FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating - 1);
+                        numLikes.setText("Likes: " + (rating - 1));
+                        Toast.makeText(ViewStoryActivity.this, "Like Removed", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else if(snapshot.exists() && snapshot.child("usersAlreadyRated").hasChild(currentUserID)){ //undo like
-                    int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
-                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyRated").child(currentUserID).setValue(false);
-                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating-1);
-                    Toast.makeText(ViewStoryActivity.this, "Unliked", Toast.LENGTH_SHORT).show();
+                else{
+                    Toast.makeText(ViewStoryActivity.this, "Story is currently disliked, remove the dislike first", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
@@ -155,17 +162,25 @@ public class ViewStoryActivity extends AppCompatActivity {
         databaseUploads.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) { //rating -1 if the user has not already rated this story
-                if(snapshot.exists() && !snapshot.child("usersAlreadyRated").hasChild(currentUserID)){
-                    int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
-                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyRated").child(currentUserID).setValue(true);
-                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating-1);
-                    Toast.makeText(ViewStoryActivity.this, "Disliked", Toast.LENGTH_SHORT).show();
+                if(snapshot.exists() && !snapshot.child("usersAlreadyLiked").hasChild(currentUserID)) {
+                    if (!snapshot.child("usersAlreadyDisliked").hasChild(currentUserID)) {
+                        int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
+                        FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyDisliked").child(currentUserID).setValue(true);
+                        FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("dislikedStories").child(storyID).setValue(true);
+                        FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating - 1);
+                        numLikes.setText("Likes: " + (rating - 1));
+                        Toast.makeText(ViewStoryActivity.this, "Disliked", Toast.LENGTH_SHORT).show();
+                    } else { //undo dislike
+                        int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
+                        FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyDisliked").child(currentUserID).removeValue();
+                        FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("dislikedStories").child(storyID).removeValue();
+                        FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating + 1);
+                        numLikes.setText("Likes: " + (rating + 1));
+                        Toast.makeText(ViewStoryActivity.this, "Dislike Removed", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else if(snapshot.exists() && snapshot.child("usersAlreadyRated").hasChild(currentUserID)){ //undo dislike
-                    int rating = Integer.parseInt(snapshot.child("rating").getValue().toString());
-                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("usersAlreadyRated").child(currentUserID).setValue(false);
-                    FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID).child("rating").setValue(rating+1);
-                    Toast.makeText(ViewStoryActivity.this, "Undisliked", Toast.LENGTH_SHORT).show();
+                else{
+                    Toast.makeText(ViewStoryActivity.this, "Story is currently liked, remove the like first", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
