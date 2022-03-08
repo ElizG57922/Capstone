@@ -1,13 +1,17 @@
-package com.example.storyapp.stories;
-
-import android.os.Bundle;
+package com.example.storyapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.storyapp.R;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+import com.example.storyapp.stories.Story;
+import com.example.storyapp.stories.StoryAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -15,38 +19,64 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class ViewStoriesActivity extends AppCompatActivity {
+public class ViewLikedStoriesActivity extends AppCompatActivity {
+
+    private String authorID, authorName;
+    private DatabaseReference databaseAuthor;
     private RecyclerView.Adapter storyAdapter;
     private ArrayList<Story> resultStories;
-    private String authorName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_stories);
+        setContentView(R.layout.activity_view_liked_stories);
+
+        Button backButton = findViewById(R.id.back);
+
         resultStories=new ArrayList<Story>();
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager newLayoutManager = new LinearLayoutManager(this);
-        newLayoutManager.setReverseLayout(true);
-        newLayoutManager.setStackFromEnd(true);
-        recyclerView.setLayoutManager(newLayoutManager);
-        authorName="";
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        storyAdapter=new StoryAdapter(getListStories(), ViewStoriesActivity.this);
-        Collections.reverse(resultStories);
+        storyAdapter=new StoryAdapter(getListStories(), ViewLikedStoriesActivity.this);
         recyclerView.setAdapter(storyAdapter);
 
-        getStories();
+        authorID = getIntent().getExtras().getString("authorID");
+        databaseAuthor = FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
+
+        getUserInfo();
+        getMyStories();
+
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewLikedStoriesActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
-    private void getStories() {
-        DatabaseReference storyDB = FirebaseDatabase.getInstance().getReference().child("Uploads");
-        storyDB.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void getUserInfo(){
+        databaseAuthor.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists() && snapshot.getChildrenCount() > 0){
+                    authorName=snapshot.child("name").toString();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    private void getMyStories() {
+        databaseAuthor.child("likedStories").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
@@ -61,34 +91,26 @@ public class ViewStoriesActivity extends AppCompatActivity {
     }
 
     private void getStoryInfo(String key) {
-        DatabaseReference userDB= FirebaseDatabase.getInstance().getReference().child("Uploads").child(key);
-        userDB.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference storyDB = FirebaseDatabase.getInstance().getReference().child("Uploads").child(key);
+        storyDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
                     String storyID = snapshot.getKey();
                     String name="";
                     String description="";
-                    String authorID="";
                     String storyURL="";
-                    if(snapshot.child("author").getValue()!=null){
-                        authorID=snapshot.child("author").getValue().toString();
-                    }
-                    findAuthorName(authorID);
-
                     if(snapshot.child("name").getValue()!=null){
                         name=snapshot.child("name").getValue().toString();
                     }
                     if(snapshot.child("desc").getValue()!=null){
                         description=snapshot.child("desc").getValue().toString();
                     }
-
                     if(snapshot.child("url").getValue()!=null){
                         storyURL=snapshot.child("url").getValue().toString();
                     }
 
                     Story newStory = new Story(storyID, name, authorID, authorName, description, storyURL);
-                //    findAuthorName(authorID, newStory);
                     resultStories.add(newStory);
                     storyAdapter.notifyDataSetChanged();
                 }
@@ -97,25 +119,6 @@ public class ViewStoriesActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
-
-    private void findAuthorName(String authorID) {
-        DatabaseReference authorDB=FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
-
-            authorDB.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    if(snapshot.child("name").getValue()!=null) {
-                        authorName=snapshot.child("name").getValue().toString();
-                     //   newStory.setAuthorName(authorName);
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
-    }
-
     private List<Story> getListStories(){
         return resultStories;
     }

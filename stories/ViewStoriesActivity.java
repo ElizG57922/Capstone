@@ -21,6 +21,7 @@ import java.util.List;
 public class ViewStoriesActivity extends AppCompatActivity {
     private RecyclerView.Adapter storyAdapter;
     private ArrayList<Story> resultStories;
+    private String authorName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class ViewStoriesActivity extends AppCompatActivity {
         newLayoutManager.setReverseLayout(true);
         newLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(newLayoutManager);
+        authorName="";
 
         storyAdapter=new StoryAdapter(getListStories(), ViewStoriesActivity.this);
         Collections.reverse(resultStories);
@@ -43,8 +45,8 @@ public class ViewStoriesActivity extends AppCompatActivity {
     }
 
     private void getStories() {
-        DatabaseReference connectionDB = FirebaseDatabase.getInstance().getReference().child("Uploads");
-        connectionDB.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference storyDB = FirebaseDatabase.getInstance().getReference().child("Uploads");
+        storyDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
@@ -69,21 +71,24 @@ public class ViewStoriesActivity extends AppCompatActivity {
                     String description="";
                     String authorID="";
                     String storyURL="";
+                    if(snapshot.child("author").getValue()!=null){
+                        authorID=snapshot.child("author").getValue().toString();
+                    }
+                    findAuthorName(authorID);
+
                     if(snapshot.child("name").getValue()!=null){
                         name=snapshot.child("name").getValue().toString();
                     }
                     if(snapshot.child("desc").getValue()!=null){
                         description=snapshot.child("desc").getValue().toString();
                     }
-                    if(snapshot.child("author").getValue()!=null){
-                        authorID=snapshot.child("author").getValue().toString();
-                    }
+
                     if(snapshot.child("url").getValue()!=null){
                         storyURL=snapshot.child("url").getValue().toString();
                     }
 
-                    Story newStory = new Story(storyID, name, authorID, description, storyURL);
-                    findAuthorName(authorID, newStory);
+                    Story newStory = new Story(storyID, name, authorID, authorName, description, storyURL);
+                //    findAuthorName(authorID, newStory);
                     resultStories.add(newStory);
                     storyAdapter.notifyDataSetChanged();
                 }
@@ -93,7 +98,7 @@ public class ViewStoriesActivity extends AppCompatActivity {
         });
     }
 
-    private void findAuthorName(String authorID, Story newStory) {
+    private void findAuthorName(String authorID) {
         DatabaseReference authorDB=FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
 
             authorDB.addValueEventListener(new ValueEventListener() {
@@ -101,8 +106,8 @@ public class ViewStoriesActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     if(snapshot.child("name").getValue()!=null) {
-                        String authorName=snapshot.child("name").getValue().toString();
-                        newStory.setAuthorName(authorName);
+                        authorName=snapshot.child("name").getValue().toString();
+                     //   newStory.setAuthorName(authorName);
                     }
                 }
             }

@@ -34,5 +34,22 @@
         android:layout_height="wrap_content"
         android:id="@+id/back"
         android:text="Back"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/viewLikedStories"
+        android:onClick="viewLikedStories"
+        android:text="View Liked Stories"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/myStoryRecyclerView"
+            android:scrollbars="vertical"
+            />
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

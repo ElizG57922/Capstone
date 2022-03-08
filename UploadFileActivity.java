@@ -123,7 +123,6 @@ public class UploadFileActivity extends AppCompatActivity {
 
                 String currentUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-               // databaseRef.child(databaseRef.push().getKey()).setValue(ref.toString());
                 Map storyInfo=new HashMap();
                 storyInfo.put("name", filenameText.getText().toString());
                 storyInfo.put("url", uri.toString());
@@ -131,9 +130,10 @@ public class UploadFileActivity extends AppCompatActivity {
                 storyInfo.put("desc", description.getText().toString());
                 storyInfo.put("type", typeString);
                 storyInfo.put("rating", 0);
-                databaseRef.child(currentUID+System.currentTimeMillis()).updateChildren(storyInfo);
+                String storyID = currentUID+System.currentTimeMillis();
+                databaseRef.child(storyID).updateChildren(storyInfo);
                 DatabaseReference userDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
-                userDatabase.child(currentUID).child("stories").child(filenameText.getText().toString()).setValue(uri.toString());
+                userDatabase.child(currentUID).child("stories").child(storyID).setValue(true);
                 Toast.makeText(UploadFileActivity.this, "File Uploaded", Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
             }

@@ -30,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Author"
+            android:visibility="invisible"
             android:id="@+id/authorName"/>
         <TextView
             android:layout_width="match_parent"

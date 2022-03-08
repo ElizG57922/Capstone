@@ -24,6 +24,14 @@ public class Story {
         this.description=description;
         this.storyURL=storyURL;
     }
+    public Story(String storyID, String name, String authorID, String authorName, String description, String storyURL){
+        this.storyID=storyID;
+        this.name=name;
+        this.authorID=authorID;
+        this.authorName=authorName;
+        this.description=description;
+        this.storyURL=storyURL;
+    }
     private void findAuthorName(String authorID) {
         DatabaseReference authorDB= FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
 
