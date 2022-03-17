@@ -10,25 +10,47 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-    <Button
-        android:layout_width="match_parent"
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            android:id="@+id/logout"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Edit Profile"
+            android:id="@+id/viewProfile"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Upload"
+            android:id="@+id/uploadFile"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        android:id="@+id/logout"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Edit Profile"
-        android:id="@+id/viewProfile"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Upload"
-        android:id="@+id/uploadFile"
-        />
+        android:orientation="horizontal">
 
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search..."
+            android:id="@+id/searchText"
+            android:backgroundTint="@color/browser_actions_bg_grey"
+            />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dropdownMenu"
+            android:spinnerMode="dropdown"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchButton"
+            android:text="Search"/>
     </LinearLayout>
     <Button
         android:layout_width="wrap_content"
@@ -43,5 +65,19 @@
         android:text="View New Stories"
         android:id="@+id/viewNewStories"
         android:onClick="viewNewStories"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View My Liked Stories"
+        android:id="@+id/viewLikedStories"
+        android:onClick="viewMyLikedStories"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Popular Stories"
+        android:id="@+id/viewPopularStories"
+        android:onClick="viewPopularStories"
         />
 </androidx.appcompat.widget.LinearLayoutCompat>

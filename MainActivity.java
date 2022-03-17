@@ -3,19 +3,25 @@ package com.example.storyapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storyapp.authors.ViewAuthorsActivity;
+import com.example.storyapp.stories.ViewLikedStoriesActivity;
+import com.example.storyapp.stories.ViewPopularStoriesActivity;
 import com.example.storyapp.stories.ViewStoriesActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private FirebaseAuth myAuth;
-    private DatabaseReference userDatabase;
     private String currentUserID;
+    private static final String[] dropdownChoices = {"Story", "Author"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,18 +30,19 @@ public class MainActivity extends AppCompatActivity {
         Button logoutButton = findViewById(R.id.logout);
         Button viewProfileButton = findViewById(R.id.viewProfile);
         Button uploadFileButton = findViewById(R.id.uploadFile);
+        Button searchButton = findViewById(R.id.searchButton);
+        EditText searchText = findViewById(R.id.searchText);
+        Spinner dropdown = findViewById(R.id.dropdownMenu);
         myAuth = FirebaseAuth.getInstance();
         currentUserID = myAuth.getCurrentUser().getUid();
-        //     userDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        //     checkUsers();
+        ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,
+                android.R.layout.simple_spinner_item, dropdownChoices);
 
-        //   rowItems=new ArrayList<Card>();
-        // arrayAdapter = new ArrayAdapterClass(this, R.layout.item, rowItems);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dropdown.setAdapter(adapter);
+        dropdown.setOnItemSelectedListener(this);
 
-        // SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
-
-        // flingContainer.setAdapter(arrayAdapter);
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,96 +70,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-/*
-        flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
-            @Override
-            public void removeFirstObjectInAdapter() {
-                Log.d("LIST", "removed object!");
-                rowItems.remove(0);
-                arrayAdapter.notifyDataSetChanged();
-            }
-            @Override
-            public void onLeftCardExit(Object dataObject) {
-                Card currentCard = (Card) dataObject;
-                String userID = currentCard.getUserID();
-      //          userDatabase.child(userID).child("connections").child("reject").child(currentUserID).setValue(true);
-        //        Toast.makeText(MainActivity.this, "Left", Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onRightCardExit(Object dataObject) {
-                Card currentCard = (Card) dataObject;
-                String userID = currentCard.getUserID();
-     //           userDatabase.child(userID).child("connections").child("accept").child(currentUserID).setValue(true);
-         //       checkMatch(userID);
-       //         Toast.makeText(MainActivity.this, "Right", Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                // Ask for more data here
-            }
-            @Override
-            public void onScroll(float scrollProgressPercent) {
-            }
-        });
 
-        // Optionally add an OnItemClickListener
-        flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClicked(int itemPosition, Object dataObject) {
-            }
-        });
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+
+        switch (position) {
+            case 0://Story
+                // Whatever you want to happen when the first item gets selected
+                break;
+            case 1://Author
+                // Whatever you want to happen when the second item gets selected
+                break;
+
+        }
     }
 
-    public void checkMatch(String userID){
-        DatabaseReference currentConnectionsDb = userDatabase.child(currentUserID).child("connections").child("accept").child(userID);
-        currentConnectionsDb.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-     //               Toast.makeText(MainActivity.this, "New Connection", Toast.LENGTH_LONG).show();
-
-     //               String key=FirebaseDatabase.getInstance().getReference().child("Messages").push().getKey();
-
-      //              userDatabase.child(snapshot.getKey()).child("connections").child("match").child(currentUserID).child("messageID").setValue(true);
-      //              userDatabase.child(currentUserID).child("connections").child("match").child(snapshot.getKey()).child("messageID").setValue(true);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // TODO Auto-generated method stub
     }
-    public void checkUsers() {
-        //  final FirebaseUser curUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("Users");
-        db.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                //if snapshot exists, user to be added is not current user (you can't right swipe yourself), and current user hasn't already been rejected by new user
-                if(snapshot.exists() && !snapshot.getKey().equals(currentUserID) && !snapshot.child("connections").child("reject").hasChild(currentUserID) && !snapshot.child("connections").child("accept").hasChild(currentUserID)){
-                    String profilePicURL="defaultImage";
-                    if(!snapshot.child("profilePicURL").getValue().equals("defaultImage")){
-                        profilePicURL = snapshot.child("profilePicURL").getValue().toString();
-                    }
-                    Card item = new Card(snapshot.getKey(), snapshot.child("name").getValue().toString(), profilePicURL);
-                    rowItems.add(item);
-                    arrayAdapter.notifyDataSetChanged();
-                }
-            }
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            }
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-            }
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }*/
 
     public void viewAuthors(View view) {
         Intent intent = new Intent(MainActivity.this, ViewAuthorsActivity.class);
@@ -161,6 +97,19 @@ public class MainActivity extends AppCompatActivity {
     }
     public void viewNewStories(View view) {
         Intent intent = new Intent(MainActivity.this, ViewStoriesActivity.class);
+        startActivity(intent);
+        finish();
+    }
+    public void viewMyLikedStories(View view) {
+        Intent intent = new Intent(view.getContext(), ViewLikedStoriesActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("authorID", currentUserID);
+        intent.putExtras(bundle);
+        view.getContext().startActivity(intent);
+        finish();
+    }
+    public void viewPopularStories(View view) {
+        Intent intent = new Intent(MainActivity.this, ViewPopularStoriesActivity.class);
         startActivity(intent);
         finish();
     }
