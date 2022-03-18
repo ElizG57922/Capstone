@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.storyapp.reviews.ReviewActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,7 +48,6 @@ public class ViewStoryActivity extends AppCompatActivity {
         storyID = getIntent().getExtras().getString("storyID");
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         databaseUploads = FirebaseDatabase.getInstance().getReference().child("Uploads").child(storyID);
-     //   databaseAuthor = FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
 
 
         nameTextField = findViewById(R.id.name);
@@ -187,6 +187,14 @@ public class ViewStoryActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+    }
+
+    public void reviewStory(View view) {
+        Intent intent = new Intent(view.getContext(), ReviewActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("storyID", storyID);
+        intent.putExtras(bundle);
+        view.getContext().startActivity(intent);
     }
 
     class GetTextfileFirebase extends AsyncTask<String, Void, InputStream> {

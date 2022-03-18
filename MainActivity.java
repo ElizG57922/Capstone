@@ -3,25 +3,25 @@ package com.example.storyapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storyapp.authors.ViewAuthorsActivity;
+import com.example.storyapp.authors.ViewSearchedAuthorsActivity;
 import com.example.storyapp.stories.ViewLikedStoriesActivity;
 import com.example.storyapp.stories.ViewPopularStoriesActivity;
+import com.example.storyapp.stories.ViewSearchedStoriesActivity;
 import com.example.storyapp.stories.ViewStoriesActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
     private FirebaseAuth myAuth;
     private String currentUserID;
-    private static final String[] dropdownChoices = {"Story", "Author"};
+    RadioGroup searchType;
+    EditText searchText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,18 +30,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Button logoutButton = findViewById(R.id.logout);
         Button viewProfileButton = findViewById(R.id.viewProfile);
         Button uploadFileButton = findViewById(R.id.uploadFile);
-        Button searchButton = findViewById(R.id.searchButton);
-        EditText searchText = findViewById(R.id.searchText);
-        Spinner dropdown = findViewById(R.id.dropdownMenu);
+        searchText = findViewById(R.id.searchText);
+        searchType = findViewById(R.id.searchRadioGroup);
         myAuth = FirebaseAuth.getInstance();
         currentUserID = myAuth.getCurrentUser().getUid();
 
-        ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,
-                android.R.layout.simple_spinner_item, dropdownChoices);
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dropdown.setAdapter(adapter);
-        dropdown.setOnItemSelectedListener(this);
 
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -71,23 +64,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-
-        switch (position) {
-            case 0://Story
-                // Whatever you want to happen when the first item gets selected
+    public void search(View view) {
+        int typeID = searchType.getCheckedRadioButtonId();
+        Intent intent;
+        Bundle bundle;
+        String keyword;
+        switch (typeID){
+            case R.id.storyChecked:
+                intent = new Intent(view.getContext(), ViewSearchedStoriesActivity.class);
+                bundle = new Bundle();
+                keyword = searchText.getText().toString();
+                bundle.putString("keyword", keyword);
+                intent.putExtras(bundle);
+                view.getContext().startActivity(intent);
+                finish();
                 break;
-            case 1://Author
-                // Whatever you want to happen when the second item gets selected
+            case R.id.authorChecked:
+                intent = new Intent(view.getContext(), ViewSearchedAuthorsActivity.class);
+                bundle = new Bundle();
+                keyword = searchText.getText().toString();
+                bundle.putString("keyword", keyword);
+                intent.putExtras(bundle);
+                view.getContext().startActivity(intent);
+                finish();
                 break;
-
+            default:
+                break;
         }
-    }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // TODO Auto-generated method stub
     }
 
     public void viewAuthors(View view) {

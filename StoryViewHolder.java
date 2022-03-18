@@ -12,7 +12,7 @@ import com.example.storyapp.ViewStoryActivity;
 
 
 public class StoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    public TextView storyID, storyName, authorID, authorName, description;
+    public TextView storyID, storyName, authorID, authorName, description, rating;
 
     public StoryViewHolder(View itemView){
         super(itemView);
@@ -22,6 +22,7 @@ public class StoryViewHolder extends RecyclerView.ViewHolder implements View.OnC
         authorID=itemView.findViewById(R.id.authorID);
         authorName=itemView.findViewById(R.id.authorName);
         description=itemView.findViewById(R.id.desc);
+        rating=itemView.findViewById(R.id.rating);
     }
 
     @Override

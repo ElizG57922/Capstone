@@ -22,28 +22,30 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewAuthorsActivity extends AppCompatActivity {
+public class ViewSearchedAuthorsActivity extends AppCompatActivity {
     private RecyclerView.Adapter authorAdapter;
     private ArrayList<Author> resultAuthors;
+    private String keyword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_authors);
         resultAuthors=new ArrayList<Author>();
-        Button backButton=findViewById(R.id.back);
+        Button backButton = findViewById(R.id.back);
+        keyword = getIntent().getExtras().getString("keyword");
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager newLayoutManager = new LinearLayoutManager(ViewAuthorsActivity.this);
+        RecyclerView.LayoutManager newLayoutManager = new LinearLayoutManager(ViewSearchedAuthorsActivity.this);
         recyclerView.setLayoutManager(newLayoutManager);
-        authorAdapter=new AuthorAdapter(getListAuthors(), ViewAuthorsActivity.this);
+        authorAdapter=new AuthorAdapter(getListAuthors(), ViewSearchedAuthorsActivity.this);
         recyclerView.setAdapter(authorAdapter);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ViewAuthorsActivity.this, MainActivity.class);
+                Intent intent = new Intent(ViewSearchedAuthorsActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -73,15 +75,13 @@ public class ViewAuthorsActivity extends AppCompatActivity {
         DatabaseReference userDB= FirebaseDatabase.getInstance().getReference().child("Users").child(key);
         userDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
+            public void onDataChange(@NonNull DataSnapshot snapshot) {// get author names that contain search keyword
+                if(snapshot.exists() && snapshot.child("name").getValue()!=null && snapshot.child("name").getValue().toString().contains(keyword)){
                     String userID = snapshot.getKey();
-                    String name="";
+                    String name=snapshot.child("name").getValue().toString();
                     String bio="";
                     String profilePicURL="";
-                    if(snapshot.child("name").getValue()!=null){
-                        name=snapshot.child("name").getValue().toString();
-                    }
+
                     if(snapshot.child("bio").getValue()!=null){
                         bio=snapshot.child("bio").getValue().toString();
                     }

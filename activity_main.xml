@@ -35,22 +35,37 @@
         android:orientation="horizontal">
 
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:hint="Search..."
             android:id="@+id/searchText"
             android:backgroundTint="@color/browser_actions_bg_grey"
             />
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/dropdownMenu"
-            android:spinnerMode="dropdown"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/searchButton"
+            android:onClick="search"
             android:text="Search"/>
+        <RadioGroup
+            android:id="@+id/searchRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/storyChecked"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Story" />
+
+            <RadioButton
+                android:id="@+id/authorChecked"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Author" />
+        </RadioGroup>
+
     </LinearLayout>
     <Button
         android:layout_width="wrap_content"

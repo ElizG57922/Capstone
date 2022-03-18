@@ -30,8 +30,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Author"
-            android:visibility="invisible"
+            android:visibility="visible"
             android:id="@+id/authorName"/>
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rating"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

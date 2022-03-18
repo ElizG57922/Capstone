@@ -15,25 +15,28 @@ public class Story {
     private String authorName;
     private String description;
     private String storyURL;
+    private int rating;
 
-    public Story(String storyID, String name, String authorID, String description, String storyURL){
+    public Story(String storyID, String name, String authorID, String description, String storyURL, int rating){
         this.storyID=storyID;
         this.name=name;
         this.authorID=authorID;
         findAuthorName(authorID);
         this.description=description;
         this.storyURL=storyURL;
+        this.rating=rating;
     }
-    public Story(String storyID, String name, String authorID, String authorName, String description, String storyURL){
+    public Story(String storyID, String name, String authorID, String authorName, String description, String storyURL, int rating){
         this.storyID=storyID;
         this.name=name;
         this.authorID=authorID;
         this.authorName=authorName;
         this.description=description;
         this.storyURL=storyURL;
+        this.rating=rating;
     }
     private void findAuthorName(String authorID) {
-        DatabaseReference authorDB= FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
+        DatabaseReference authorDB = FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
 
         authorDB.addValueEventListener(new ValueEventListener() {
             @Override
@@ -48,22 +51,21 @@ public class Story {
             public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
+    public int getRating(){
+        return rating;
+    }
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
-
     public String getAuthorName() {
         return authorName;
     }
-
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
-
     public String getStoryID(){
         return storyID;
     }

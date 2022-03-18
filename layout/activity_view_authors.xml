@@ -6,7 +6,11 @@
     android:layout_height="wrap_content"
     tools:context="com.example.storyapp.authors.ViewAuthorsActivity"
     android:orientation="vertical">
-
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/back"
+        android:text="Back"/>
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
