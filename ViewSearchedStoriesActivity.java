@@ -1,14 +1,14 @@
 package com.example.storyapp.stories;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.storyapp.MainActivity;
 import com.example.storyapp.R;
@@ -21,43 +21,42 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+public class ViewSearchedStoriesActivity extends AppCompatActivity {
 
-public class ViewStoriesActivity extends AppCompatActivity {
-    private RecyclerView.Adapter storyAdapter;
-    private ArrayList<Story> resultStories;
-    private String authorName;
-    private Button backButton;
+        private String authorName, keyword;
+        private RecyclerView.Adapter storyAdapter;
+        private ArrayList<Story> resultStories;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_stories);
-        resultStories=new ArrayList<Story>();
-        backButton = findViewById(R.id.back);
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager newLayoutManager = new LinearLayoutManager(this);
-        newLayoutManager.setReverseLayout(true);
-        newLayoutManager.setStackFromEnd(true);
-        recyclerView.setLayoutManager(newLayoutManager);
-        authorName="";
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_view_stories);
+            resultStories=new ArrayList<Story>();
+            Button backButton = findViewById(R.id.back);
+            RecyclerView recyclerView = findViewById(R.id.recyclerView);
+            recyclerView.setNestedScrollingEnabled(false);
+            recyclerView.setHasFixedSize(true);
+            LinearLayoutManager newLayoutManager = new LinearLayoutManager(this);
+            newLayoutManager.setReverseLayout(true);
+            newLayoutManager.setStackFromEnd(true);
+            recyclerView.setLayoutManager(newLayoutManager);
+            authorName="";
+            keyword = getIntent().getExtras().getString("keyword");
 
-        storyAdapter=new StoryAdapter(getListStories(), ViewStoriesActivity.this);
-        Collections.reverse(resultStories);
-        recyclerView.setAdapter(storyAdapter);
+            storyAdapter=new StoryAdapter(getListStories(), ViewSearchedStoriesActivity.this);
+            recyclerView.setAdapter(storyAdapter);
 
-        getStories();
+            getStories();
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ViewStoriesActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-    }
+            backButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(ViewSearchedStoriesActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+        }
 
     private void getStories() {
         DatabaseReference storyDB = FirebaseDatabase.getInstance().getReference().child("Uploads");
@@ -79,25 +78,21 @@ public class ViewStoriesActivity extends AppCompatActivity {
         DatabaseReference userDB= FirebaseDatabase.getInstance().getReference().child("Uploads").child(key);
         userDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
+            public void onDataChange(@NonNull DataSnapshot snapshot) {//get stories if name contains search keyword
+                if(snapshot.exists() && snapshot.child("name").getValue()!=null && snapshot.child("name").getValue().toString().contains(keyword)){
                     String storyID = snapshot.getKey();
-                    String name="";
+                    String name=snapshot.child("name").getValue().toString();
                     String description="";
                     String authorID="";
                     String storyURL="";
                     int rating = 0;
+
                     if(snapshot.child("author").getValue()!=null){
                         authorID=snapshot.child("author").getValue().toString();
-                    }
-
-                    if(snapshot.child("name").getValue()!=null){
-                        name=snapshot.child("name").getValue().toString();
                     }
                     if(snapshot.child("desc").getValue()!=null){
                         description=snapshot.child("desc").getValue().toString();
                     }
-
                     if(snapshot.child("url").getValue()!=null){
                         storyURL=snapshot.child("url").getValue().toString();
                     }
@@ -119,7 +114,7 @@ public class ViewStoriesActivity extends AppCompatActivity {
     private void findAuthorName(String authorID, Story newStory) {
         DatabaseReference authorDB=FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
 
-            authorDB.addValueEventListener(new ValueEventListener() {
+        authorDB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -137,4 +132,4 @@ public class ViewStoriesActivity extends AppCompatActivity {
     private List<Story> getListStories(){
         return resultStories;
     }
-}
+    }

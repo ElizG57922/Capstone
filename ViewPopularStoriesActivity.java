@@ -1,16 +1,12 @@
 package com.example.storyapp.stories;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.storyapp.MainActivity;
 import com.example.storyapp.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,20 +16,18 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class ViewStoriesActivity extends AppCompatActivity {
+public class ViewPopularStoriesActivity extends AppCompatActivity {
     private RecyclerView.Adapter storyAdapter;
     private ArrayList<Story> resultStories;
-    private String authorName;
-    private Button backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_stories);
         resultStories=new ArrayList<Story>();
-        backButton = findViewById(R.id.back);
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
@@ -41,22 +35,17 @@ public class ViewStoriesActivity extends AppCompatActivity {
         newLayoutManager.setReverseLayout(true);
         newLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(newLayoutManager);
-        authorName="";
 
-        storyAdapter=new StoryAdapter(getListStories(), ViewStoriesActivity.this);
-        Collections.reverse(resultStories);
+        storyAdapter=new StoryAdapter(getListStories(), ViewPopularStoriesActivity.this);
+        Collections.sort(resultStories, new Comparator<Story>() {//sort by rating
+            @Override
+            public int compare(Story s1, Story s2) {
+                return Integer.compare(s2.getRating(), s1.getRating());
+            }
+        });
         recyclerView.setAdapter(storyAdapter);
 
         getStories();
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ViewStoriesActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
     }
 
     private void getStories() {
@@ -86,7 +75,7 @@ public class ViewStoriesActivity extends AppCompatActivity {
                     String description="";
                     String authorID="";
                     String storyURL="";
-                    int rating = 0;
+                    int rating=0;
                     if(snapshot.child("author").getValue()!=null){
                         authorID=snapshot.child("author").getValue().toString();
                     }
@@ -106,27 +95,9 @@ public class ViewStoriesActivity extends AppCompatActivity {
                     }
 
                     Story newStory = new Story(storyID, name, authorID, description, storyURL, rating);
-                    findAuthorName(authorID, newStory);
+                    //    findAuthorName(authorID, newStory);
                     resultStories.add(newStory);
                     storyAdapter.notifyDataSetChanged();
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
-    }
-
-    private void findAuthorName(String authorID, Story newStory) {
-        DatabaseReference authorDB=FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
-
-            authorDB.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    if(snapshot.child("name").getValue()!=null) {
-                        authorName=snapshot.child("name").getValue().toString();
-                        newStory.setAuthorName(authorName);
-                    }
                 }
             }
             @Override

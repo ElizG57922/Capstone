@@ -1,12 +1,16 @@
 package com.example.storyapp.stories;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.storyapp.MainActivity;
 import com.example.storyapp.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,12 +26,14 @@ public class ViewStoriesActivity extends AppCompatActivity {
     private RecyclerView.Adapter storyAdapter;
     private ArrayList<Story> resultStories;
     private String authorName;
+    private Button backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_stories);
         resultStories=new ArrayList<Story>();
+        backButton = findViewById(R.id.back);
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
@@ -42,6 +48,15 @@ public class ViewStoriesActivity extends AppCompatActivity {
         recyclerView.setAdapter(storyAdapter);
 
         getStories();
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewStoriesActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void getStories() {
@@ -71,10 +86,10 @@ public class ViewStoriesActivity extends AppCompatActivity {
                     String description="";
                     String authorID="";
                     String storyURL="";
+                    int rating = 0;
                     if(snapshot.child("author").getValue()!=null){
                         authorID=snapshot.child("author").getValue().toString();
                     }
-                    findAuthorName(authorID);
 
                     if(snapshot.child("name").getValue()!=null){
                         name=snapshot.child("name").getValue().toString();
@@ -86,9 +101,12 @@ public class ViewStoriesActivity extends AppCompatActivity {
                     if(snapshot.child("url").getValue()!=null){
                         storyURL=snapshot.child("url").getValue().toString();
                     }
+                    if(snapshot.child("rating").getValue()!=null){
+                        rating=Integer.parseInt(snapshot.child("rating").getValue().toString());
+                    }
 
-                    Story newStory = new Story(storyID, name, authorID, authorName, description, storyURL);
-                //    findAuthorName(authorID, newStory);
+                    Story newStory = new Story(storyID, name, authorID, description, storyURL, rating);
+                    findAuthorName(authorID, newStory);
                     resultStories.add(newStory);
                     storyAdapter.notifyDataSetChanged();
                 }
@@ -98,7 +116,7 @@ public class ViewStoriesActivity extends AppCompatActivity {
         });
     }
 
-    private void findAuthorName(String authorID) {
+    private void findAuthorName(String authorID, Story newStory) {
         DatabaseReference authorDB=FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
 
             authorDB.addValueEventListener(new ValueEventListener() {
@@ -107,7 +125,7 @@ public class ViewStoriesActivity extends AppCompatActivity {
                 if (snapshot.exists()) {
                     if(snapshot.child("name").getValue()!=null) {
                         authorName=snapshot.child("name").getValue().toString();
-                     //   newStory.setAuthorName(authorName);
+                        newStory.setAuthorName(authorName);
                     }
                 }
             }

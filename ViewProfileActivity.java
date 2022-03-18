@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.storyapp.stories.Story;
 import com.example.storyapp.stories.StoryAdapter;
+import com.example.storyapp.stories.ViewLikedStoriesActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -131,6 +132,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                     String name="";
                     String description="";
                     String storyURL="";
+                    int rating=0;
                     if(snapshot.child("name").getValue()!=null){
                         name=snapshot.child("name").getValue().toString();
                     }
@@ -140,8 +142,11 @@ public class ViewProfileActivity extends AppCompatActivity {
                     if(snapshot.child("url").getValue()!=null){
                         storyURL=snapshot.child("url").getValue().toString();
                     }
+                    if(snapshot.child("rating").getValue()!=null){
+                        rating=Integer.parseInt(snapshot.child("rating").getValue().toString());
+                    }
 
-                    Story newStory = new Story(storyID, name, authorID, nameTextField.getText().toString(), description, storyURL);
+                    Story newStory = new Story(storyID, name, authorID, nameTextField.getText().toString(), description, storyURL, rating);
                     resultStories.add(newStory);
                     storyAdapter.notifyDataSetChanged();
                 }
@@ -161,5 +166,6 @@ public class ViewProfileActivity extends AppCompatActivity {
         bundle.putString("authorID", authorID);
         intent.putExtras(bundle);
         view.getContext().startActivity(intent);
+        finish();
     }
 }
