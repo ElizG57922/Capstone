@@ -1,12 +1,16 @@
 package com.example.storyapp.stories;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.storyapp.MainActivity;
 import com.example.storyapp.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,6 +32,7 @@ public class ViewPopularStoriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_stories);
         resultStories=new ArrayList<Story>();
+        Button backButton = findViewById(R.id.back);
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
@@ -36,11 +41,20 @@ public class ViewPopularStoriesActivity extends AppCompatActivity {
         newLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(newLayoutManager);
 
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewPopularStoriesActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         storyAdapter=new StoryAdapter(getListStories(), ViewPopularStoriesActivity.this);
         Collections.sort(resultStories, new Comparator<Story>() {//sort by rating
             @Override
             public int compare(Story s1, Story s2) {
-                return Integer.compare(s2.getRating(), s1.getRating());
+                return Integer.compare(s1.getRating(), s2.getRating());
             }
         });
         recyclerView.setAdapter(storyAdapter);
