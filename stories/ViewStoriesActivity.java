@@ -38,8 +38,8 @@ public class ViewStoriesActivity extends AppCompatActivity {
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager newLayoutManager = new LinearLayoutManager(this);
-        newLayoutManager.setReverseLayout(true);
-        newLayoutManager.setStackFromEnd(true);
+     //   newLayoutManager.setReverseLayout(true);
+    //    newLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(newLayoutManager);
         authorName="";
 
@@ -118,8 +118,7 @@ public class ViewStoriesActivity extends AppCompatActivity {
 
     private void findAuthorName(String authorID, Story newStory) {
         DatabaseReference authorDB=FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
-
-            authorDB.addValueEventListener(new ValueEventListener() {
+        authorDB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {

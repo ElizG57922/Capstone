@@ -51,15 +51,10 @@ public class ViewPopularStoriesActivity extends AppCompatActivity {
         });
 
         storyAdapter=new StoryAdapter(getListStories(), ViewPopularStoriesActivity.this);
-        Collections.sort(resultStories, new Comparator<Story>() {//sort by rating
-            @Override
-            public int compare(Story s1, Story s2) {
-                return Integer.compare(s1.getRating(), s2.getRating());
-            }
-        });
-        recyclerView.setAdapter(storyAdapter);
 
+        recyclerView.setAdapter(storyAdapter);
         getStories();
+
     }
 
     private void getStories() {
@@ -110,7 +105,10 @@ public class ViewPopularStoriesActivity extends AppCompatActivity {
 
                     Story newStory = new Story(storyID, name, authorID, description, storyURL, rating);
                     //    findAuthorName(authorID, newStory);
-                    resultStories.add(newStory);
+                    int i = 0;
+                    while(i < resultStories.size() && newStory.getRating() < resultStories.get(i).getRating())
+                        i++;
+                    resultStories.add(i, newStory);//insert into sorted position
                     storyAdapter.notifyDataSetChanged();
                 }
             }

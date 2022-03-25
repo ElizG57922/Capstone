@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 
@@ -57,6 +58,7 @@ public class ViewStoryActivity extends AppCompatActivity {
         Button backButton = findViewById(R.id.back);
         pdfView = findViewById(R.id.pdfView);
         textView = findViewById(R.id.storyText);
+        textView.setMovementMethod(new ScrollingMovementMethod());
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
