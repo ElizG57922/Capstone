@@ -19,7 +19,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.installations.time.SystemClock;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -131,7 +130,7 @@ public class UploadFileActivity extends AppCompatActivity {
                 storyInfo.put("desc", description.getText().toString());
                 storyInfo.put("type", typeString);
                 storyInfo.put("rating", 0);
-                String storyID = currentUID+System.currentTimeMillis();
+                String storyID = System.currentTimeMillis()+currentUID;
                 databaseRef.child(storyID).updateChildren(storyInfo);
                 DatabaseReference userDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
                 userDatabase.child(currentUID).child("stories").child(storyID).setValue(true);

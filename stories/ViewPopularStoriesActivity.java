@@ -83,7 +83,6 @@ public class ViewPopularStoriesActivity extends AppCompatActivity {
                     String name="";
                     String description="";
                     String authorID="";
-                    String storyURL="";
                     int rating=0;
                     if(snapshot.child("author").getValue()!=null){
                         authorID=snapshot.child("author").getValue().toString();
@@ -95,16 +94,11 @@ public class ViewPopularStoriesActivity extends AppCompatActivity {
                     if(snapshot.child("desc").getValue()!=null){
                         description=snapshot.child("desc").getValue().toString();
                     }
-
-                    if(snapshot.child("url").getValue()!=null){
-                        storyURL=snapshot.child("url").getValue().toString();
-                    }
                     if(snapshot.child("rating").getValue()!=null){
                         rating=Integer.parseInt(snapshot.child("rating").getValue().toString());
                     }
 
-                    Story newStory = new Story(storyID, name, authorID, description, storyURL, rating);
-                    //    findAuthorName(authorID, newStory);
+                    Story newStory = new Story(storyID, name, authorID, description, rating);
                     int i = 0;
                     while(i < resultStories.size() && newStory.getRating() < resultStories.get(i).getRating())
                         i++;

@@ -34,17 +34,31 @@ public class ViewProfileActivity extends AppCompatActivity {
     private EditText nameTextField, bioTextField;
     private ImageView profilePic;
     private String name, bio, profilePicURL;
+    private Button editButton;
     DatabaseReference databaseAuthor, databaseUploads;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile);
 
+        nameTextField = findViewById(R.id.name);
+        bioTextField = findViewById(R.id.bio);
+        profilePic = findViewById(R.id.profilePic);
+        Button backButton = findViewById(R.id.back);
+        editButton=findViewById(R.id.editButton);
+        editButton.setEnabled(false);
+
+        FirebaseAuth myAuth = FirebaseAuth.getInstance();
+
         authorID = getIntent().getExtras().getString("authorID");
+        if(authorID.equals(myAuth.getCurrentUser().getUid())) { //if the current user is selected
+            editButton.setEnabled(true);
+            editButton.setVisibility(View.VISIBLE);
+        }
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         databaseUploads = FirebaseDatabase.getInstance().getReference().child("Uploads");
         databaseAuthor = FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
-
 
         resultStories=new ArrayList<Story>();
         RecyclerView recyclerView = findViewById(R.id.myStoryRecyclerView);
@@ -57,15 +71,18 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         getMyStories();
 
-        nameTextField = findViewById(R.id.name);
-        bioTextField = findViewById(R.id.bio);
-        profilePic = findViewById(R.id.profilePic);
-        Button backButton = findViewById(R.id.back);
-
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ViewProfileActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewProfileActivity.this, EditProfileActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -131,7 +148,6 @@ public class ViewProfileActivity extends AppCompatActivity {
                     String storyID = snapshot.getKey();
                     String name="";
                     String description="";
-                    String storyURL="";
                     int rating=0;
                     if(snapshot.child("name").getValue()!=null){
                         name=snapshot.child("name").getValue().toString();
@@ -139,14 +155,11 @@ public class ViewProfileActivity extends AppCompatActivity {
                     if(snapshot.child("desc").getValue()!=null){
                         description=snapshot.child("desc").getValue().toString();
                     }
-                    if(snapshot.child("url").getValue()!=null){
-                        storyURL=snapshot.child("url").getValue().toString();
-                    }
                     if(snapshot.child("rating").getValue()!=null){
                         rating=Integer.parseInt(snapshot.child("rating").getValue().toString());
                     }
 
-                    Story newStory = new Story(storyID, name, authorID, nameTextField.getText().toString(), description, storyURL, rating);
+                    Story newStory = new Story(storyID, name, authorID, description, rating);
                     resultStories.add(newStory);
                     storyAdapter.notifyDataSetChanged();
                 }

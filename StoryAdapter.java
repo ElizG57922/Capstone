@@ -36,7 +36,6 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryViewHolder> {
         holder.storyName.setText(storyList.get(position).getName());
         holder.storyID.setText(storyList.get(position).getStoryID());
         holder.authorID.setText(storyList.get(position).getAuthorID());
-        holder.authorName.setText("By "+storyList.get(position).getAuthorName());
         holder.rating.setText("Rating: "+storyList.get(position).getRating());
         holder.description.setText(storyList.get(position).getDescription());
     }

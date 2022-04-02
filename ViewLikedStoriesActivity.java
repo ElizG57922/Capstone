@@ -23,7 +23,7 @@ import java.util.List;
 
 public class ViewLikedStoriesActivity extends AppCompatActivity {
 
-    private String authorID, authorName;
+    private String authorID;
     private DatabaseReference databaseAuthor;
     private RecyclerView.Adapter storyAdapter;
     private ArrayList<Story> resultStories;
@@ -47,7 +47,6 @@ public class ViewLikedStoriesActivity extends AppCompatActivity {
         authorID = getIntent().getExtras().getString("authorID");
         databaseAuthor = FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
 
-        getUserInfo();
         getMyStories();
 
 
@@ -57,20 +56,6 @@ public class ViewLikedStoriesActivity extends AppCompatActivity {
                 Intent intent = new Intent(ViewLikedStoriesActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
-            }
-        });
-    }
-
-    private void getUserInfo(){
-        databaseAuthor.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists() && snapshot.getChildrenCount() > 0){
-                    authorName=snapshot.child("name").getValue().toString();
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
@@ -99,7 +84,6 @@ public class ViewLikedStoriesActivity extends AppCompatActivity {
                     String storyID = snapshot.getKey();
                     String name="";
                     String description="";
-                    String storyURL="";
                     int rating = 0;
                     if(snapshot.child("name").getValue()!=null){
                         name=snapshot.child("name").getValue().toString();
@@ -107,14 +91,11 @@ public class ViewLikedStoriesActivity extends AppCompatActivity {
                     if(snapshot.child("desc").getValue()!=null){
                         description=snapshot.child("desc").getValue().toString();
                     }
-                    if(snapshot.child("url").getValue()!=null){
-                        storyURL=snapshot.child("url").getValue().toString();
-                    }
                     if(snapshot.child("rating").getValue()!=null){
                         rating=Integer.parseInt(snapshot.child("rating").getValue().toString());
                     }
 
-                    Story newStory = new Story(storyID, name, authorID, authorName, description, storyURL, rating);
+                    Story newStory = new Story(storyID, name, authorID, description, rating);
                     resultStories.add(newStory);
                     storyAdapter.notifyDataSetChanged();
                 }

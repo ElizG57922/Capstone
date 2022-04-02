@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 public class ViewSearchedStoriesActivity extends AppCompatActivity {
 
-        private String authorName, keyword;
+        private String keyword;
         private RecyclerView.Adapter storyAdapter;
         private ArrayList<Story> resultStories;
 
@@ -40,7 +40,6 @@ public class ViewSearchedStoriesActivity extends AppCompatActivity {
             newLayoutManager.setReverseLayout(true);
             newLayoutManager.setStackFromEnd(true);
             recyclerView.setLayoutManager(newLayoutManager);
-            authorName="";
             keyword = getIntent().getExtras().getString("keyword");
 
             storyAdapter=new StoryAdapter(getListStories(), ViewSearchedStoriesActivity.this);
@@ -84,7 +83,6 @@ public class ViewSearchedStoriesActivity extends AppCompatActivity {
                     String name=snapshot.child("name").getValue().toString();
                     String description="";
                     String authorID="";
-                    String storyURL="";
                     int rating = 0;
 
                     if(snapshot.child("author").getValue()!=null){
@@ -93,35 +91,13 @@ public class ViewSearchedStoriesActivity extends AppCompatActivity {
                     if(snapshot.child("desc").getValue()!=null){
                         description=snapshot.child("desc").getValue().toString();
                     }
-                    if(snapshot.child("url").getValue()!=null){
-                        storyURL=snapshot.child("url").getValue().toString();
-                    }
                     if(snapshot.child("rating").getValue()!=null){
                         rating=Integer.parseInt(snapshot.child("rating").getValue().toString());
                     }
 
-                    Story newStory = new Story(storyID, name, authorID, description, storyURL, rating);
-                    findAuthorName(authorID, newStory);
+                    Story newStory = new Story(storyID, name, authorID, description, rating);
                     resultStories.add(newStory);
                     storyAdapter.notifyDataSetChanged();
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
-    }
-
-    private void findAuthorName(String authorID, Story newStory) {
-        DatabaseReference authorDB=FirebaseDatabase.getInstance().getReference().child("Users").child(authorID);
-
-        authorDB.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    if(snapshot.child("name").getValue()!=null) {
-                        authorName=snapshot.child("name").getValue().toString();
-                        newStory.setAuthorName(authorName);
-                    }
                 }
             }
             @Override
