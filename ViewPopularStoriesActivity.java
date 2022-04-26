@@ -100,7 +100,7 @@ public class ViewPopularStoriesActivity extends AppCompatActivity {
 
                     Story newStory = new Story(storyID, name, authorID, description, rating);
                     int i = 0;
-                    while(i < resultStories.size() && newStory.getRating() < resultStories.get(i).getRating())
+                    while(i < resultStories.size() && newStory.getRating() > resultStories.get(i).getRating())
                         i++;
                     resultStories.add(i, newStory);//insert into sorted position
                     storyAdapter.notifyDataSetChanged();
