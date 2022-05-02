@@ -77,7 +77,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View New Stories"
+        android:text="View Stories"
         android:id="@+id/viewNewStories"
         android:onClick="viewNewStories"
         />
