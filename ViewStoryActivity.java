@@ -40,7 +40,6 @@ public class ViewStoryActivity extends AppCompatActivity {
     private PDFView pdfView;
     private TextView textView;
     private String name, desc, storyURL;
-    private Button editButton;
     DatabaseReference databaseUploads;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +58,6 @@ public class ViewStoryActivity extends AppCompatActivity {
         pdfView = findViewById(R.id.pdfView);
         textView = findViewById(R.id.storyText);
         textView.setMovementMethod(new ScrollingMovementMethod());
-        editButton=findViewById(R.id.editButton);
-        editButton.setEnabled(false);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,10 +89,6 @@ public class ViewStoryActivity extends AppCompatActivity {
                     if(map.get("author")!=null) {
                         String authorID = map.get("author").toString();
                         findAuthorName(authorID);
-                        if(authorID.equals(currentUserID)) {
-                            editButton.setEnabled(true);
-                            editButton.setVisibility(View.VISIBLE);
-                        }
                     }
                     if(map.get("rating")!=null) {
                         int rating = Integer.parseInt(map.get("rating").toString());
